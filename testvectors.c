@@ -43,7 +43,7 @@ void testAdd(CuTest* tc) {
   v1 = vectorMalloc(); v2 = vectorMalloc(); v3 = vectorMalloc();
   assign(v1, 1.0, 2.0, 3.0);
   assign(v2, 10.0, 20.0, 30.0);
-  add(v1, v2, v3);
+  add(v3, v1, v2);
   CuAssertDblEquals(tc, 11.0, v3->x, DELTA);
   CuAssertDblEquals(tc, 22.0, v3->y, DELTA);
   CuAssertDblEquals(tc, 33.0, v3->z, DELTA);

@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "raytrace.h"
-#include "linearalgebra.h"
+#include "vectors.h"
 
 double frand() {
   return (float)rand()/(float)RAND_MAX;

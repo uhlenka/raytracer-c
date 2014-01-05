@@ -17,30 +17,30 @@ void vectorFree(vector v) {
   free(v);
 }
 
-void assign(vector v, double x, double y, double z) {
-  *v = (struct vector){x,y,z};
+void assign(vector target, double x, double y, double z) {
+  *target = (struct vector){x,y,z};
 }
 
-void copy(vector v1, vector v2) {
-  v1->x = v2->x; v1->y = v2->y; v1->z = v2->z;
+void copy(vector target, vector source) {
+  target->x = source->x; target->y = source->y; target->z = source->z;
 }
 
-void add(vector v1, vector v2, vector v3) {
-    v3->x = v1->x + v2->x;
-    v3->y = v1->y + v2->y;
-    v3->z = v1->z + v2->z;
-  }
-
-void subtract(vector v1, vector v2, vector v3) {
-  v3->x = v1->x - v2->x;
-  v3->y = v1->y - v2->y;
-  v3->z = v1->z - v2->z;
+void add(vector target, vector source1, vector source2) {
+  target->x = source1->x + source2->x;
+  target->y = source1->y + source2->y;
+  target->z = source1->z + source2->z;
 }
 
-void multiply(vector v, double s) {
-  v->x *= s;
-  v->y *= s;
-  v->z *= s;
+void subtract(vector target, vector source1, vector source2) {
+  target->x = source1->x - source2->x;
+  target->y = source1->y - source2->y;
+  target->z = source1->z - source2->z;
+}
+
+void multiply(vector target, double s) {
+  target->x *= s;
+  target->y *= s;
+  target->z *= s;
 }
 
 double dot(vector v1, vector v2) {
@@ -57,7 +57,7 @@ void normalize(vector v) {
 
 double distance(vector p1, vector p2) {
   vector v = vectorMalloc();
-  subtract(p1, p2, v);
+  subtract(v, p1, p2);
   return mag(v);
 }
 

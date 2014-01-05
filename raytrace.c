@@ -100,7 +100,7 @@ void quadratic(double a, double b, double c,
 void sphereNormal(sphere s,
 		  vector pos,
 		  vector norm) {
-  subtract(pos, s->center, norm);
+  subtract(norm, pos, s->center);
   normalize(norm);
 }
 
@@ -136,7 +136,7 @@ void colorAt(double x, double y,
   assign(pos, x, y, 0.0);
   ray myray = rayMalloc();
   myray->position = theworld->eye;
-  subtract(pos, theworld->eye, myray->direction);
+  subtract(myray->direction, pos, theworld->eye);
   sendRay(myray, theworld, color);
 }
 
@@ -202,7 +202,7 @@ void intersect(sphere  mysphere,
   int nroots;
   double root1, root2;
   a = dot(myray->direction, myray->direction);
-  subtract(myray->position, mysphere->center, sphereRay);
+  subtract(sphereRay, myray->position, mysphere->center);
   b = 2.0*dot(sphereRay, myray->direction);
   c = dot(sphereRay, sphereRay) - mysphere->radius*mysphere->radius;
   quadratic(a,b,c, &nroots, &root1, &root2);
@@ -212,12 +212,12 @@ void intersect(sphere  mysphere,
     *success = 1;
     copy(pos, myray->direction);
     multiply(pos, root1);
-    add(myray->position, pos, pos);
+    add(pos, myray->position, pos);
   } else if (root2 > 0.0) {
     *success = 1;
     copy(pos, myray->direction);
     multiply(pos, root2);
-    add(myray->position, pos, pos);
+    add(pos, myray->position, pos);
   } else {
     *success = 0;
   }

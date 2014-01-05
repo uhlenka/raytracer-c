@@ -16,11 +16,11 @@ typedef struct vector{
 
 vector vectorMalloc(void);
 void vectorFree(vector v);
-void assign(vector v, double x, double y, double z);
-void copy(vector v1, vector v2);
-void add(vector v1, vector v2, vector v3);
-void subtract(vector v1, vector v2, vector v3);
-void multiply(vector v, double s);
+void assign(vector target, double x, double y, double z);
+void copy(vector target, vector source);
+void add(vector target, vector source1, vector source2);
+void subtract(vector target, vector source1, vector source2);
+void multiply(vector target, double s);
 double dot(vector v1, vector v2);
 double mag(vector v);
 void normalize(vector v);

@@ -11,5 +11,7 @@ test: $(OBJECTS) $(TESTOBJECTS)
 	$(CC) $(OBJECTS) $(TESTOBJECTS) $(LDFLAGS) -o test
 random: $(OBJECTS) randomspheres.o
 	$(CC) $(OBJECTS) randomspheres.o $(LDFLAGS) -o random
+ring: $(OBJECTS) ring.o
+	$(CC) $(OBJECTS) ring.o $(LDFLAGS) -o ring
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@
