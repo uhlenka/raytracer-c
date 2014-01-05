@@ -2,7 +2,7 @@
 
 #include "CuTest.h"
 
-CuSuite* LinearAlgebraSuite();
+CuSuite* VectorsSuite();
 CuSuite* RaytraceSuite();
 
 void RunAllTests(void)
@@ -10,7 +10,7 @@ void RunAllTests(void)
 	CuString *output = CuStringNew();
 	CuSuite* suite = CuSuiteNew();
 
-	CuSuiteAddSuite(suite, LinearAlgebraSuite());
+	CuSuiteAddSuite(suite, VectorsSuite());
 	CuSuiteAddSuite(suite, RaytraceSuite());
 
 	CuSuiteRun(suite);
@@ -22,4 +22,5 @@ void RunAllTests(void)
 int main(void)
 {
 	RunAllTests();
+	return 0;
 }

@@ -23,6 +23,6 @@ int main(int argc, char * argv[] ) {
 			 frand(),
 			 frand()));
   }
-  tracer("random.ppm", 6, theworld);
+  tracer("images/random.ppm", 6, theworld);
   return 0;
 }

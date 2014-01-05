@@ -111,7 +111,6 @@ void testFirstHit(CuTest* tc) {
   sphereFree(s1);
   sphereFree(s2);
 }
-  
 
 CuSuite* RaytraceSuite(void) {
   CuSuite* suite = CuSuiteNew();

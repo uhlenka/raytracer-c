@@ -1,7 +1,7 @@
 CC = gcc
-SOURCES = raytrace.c linearalgebra.c
+SOURCES = raytrace.c vectors.c
 OBJECTS = $(SOURCES:.c=.o)
-TESTSOURCES = AllTests.c CuTest.c testlinearalgebra.c testraytrace.c
+TESTSOURCES = AllTests.c CuTest.c testvectors.c testraytrace.c
 TESTOBJECTS = $(TESTSOURCES:.c=.o)
 
 CFLAGS = -c -Wall
