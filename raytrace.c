@@ -70,7 +70,9 @@ void worldFree(world w) {
   free(w);
 }
 
-void addSphere(world w, sphere s) {
+void addSphere(world w, /* inout */
+	       sphere s /* in */) {
+/* add a sphere to the world */
   if (w->length >= MAXOBJECTS) {
     printf("WARNING: Too many objects in world, not adding new sphere.\n");
     return;
@@ -79,9 +81,10 @@ void addSphere(world w, sphere s) {
   w->length += 1;
 }
 
-void quadratic(double a, double b, double c,
-	       int* n,
-	       double* s1, double* s2){
+void quadratic(double a, double b, double c, /* in */
+	       int* n,  /* out, the number of solutions */
+	       double* s1, /* out, smallest solution */
+	       double* s2  /* out, other solution */) {
   double discriminant, sqrtDiscriminant;
   discriminant = b*b - 4.0*a*c;
   if (discriminant < 0.0) {
@@ -97,16 +100,18 @@ void quadratic(double a, double b, double c,
   }
 }
 
-void sphereNormal(sphere s,
-		  vector pos,
-		  vector norm) {
+void sphereNormal(sphere s,    /* in */
+		  vector pos,  /* in */
+		  vector norm  /* out */) {
+/* find the normal to a sphere s at position pos */
   subtract(norm, pos, s->center);
   normalize(norm);
 }
 
-void tracer(const char* filename,
-	    int resolution,
-	    world  theworld) {
+void tracer(const char* filename, /* file to write image into */
+	    int resolution,       /* in, width and height, in 100 pixels */
+	    world theworld          /* in, world to render */){
+/* raytrace the scene */
   FILE *file;
   double x, y, inc;
   int size, i, j;
@@ -140,9 +145,10 @@ void colorAt(double x, double y,
   sendRay(myray, theworld, color);
 }
 
-void sendRay(ray  myray,
-	     world  theworld,
-	     vector color) {
+void sendRay(ray myray,    /* in */
+	     world theworld, /* in */
+	     vector color  /* out */) {
+/* find color of what ray hits in the world */
   int success;
   vector pos = vectorMalloc();
   sphere mysphere = sphereMalloc();
@@ -154,10 +160,11 @@ void sendRay(ray  myray,
   }
 }
 
-void lambert(sphere  mysphere,
-	     vector pos,
-	     world  theworld,
-	     vector color) {
+void lambert(sphere mysphere, /* in */
+	     vector pos,     /* in */
+	     world  theworld,   /* in */
+	     vector color    /* out */) {
+/* find color of pos on sphere in world, using lambert shading */
   vector norm = vectorMalloc();
   double value;
   sphereNormal(mysphere, pos, norm);
@@ -169,11 +176,14 @@ void lambert(sphere  mysphere,
   multiply(color, value);
 }
 
-void firstHit(ray  myray,
-	      world  theworld,
-	      int* success,
-	      vector pos,
-	      sphere mysphere) {
+void firstHit(ray myray,      /* in */
+	      world theworld,  /* in */
+	      int* success,  /* out */
+	      vector pos,    /* out */
+	      sphere mysphere  /* out */) {
+/* find first hit of ray in world
+   success is false if no hit
+   sphere and position of closest hit returned otherwise */
   double dist, tmpDist;
   vector tmpPos = vectorMalloc();
   int tmpSuccess, i;
@@ -193,10 +203,13 @@ void firstHit(ray  myray,
   }
 }
 
-void intersect(sphere  mysphere,
-	       ray  myray,
-	       int* success,
-	       vector pos) {
+void intersect(sphere mysphere, /* in */
+	       ray myray,      /* in */
+	       int* success,  /* out */
+	       vector pos     /* out */) {
+/* determine if ray intersects sphere
+   success is false if no intersection
+   pos is position of intersection otherwise */
   double a, b, c;
   vector sphereRay = vectorMalloc();
   int nroots;
