@@ -211,13 +211,13 @@ void intersect(sphere mysphere, /* in */
    success is false if no intersection
    pos is position of intersection otherwise */
   double a, b, c;
-  vector sphereRay = vectorMalloc();
+  vector p = vectorMalloc();
   int nroots;
   double root1, root2;
   a = dot(myray->direction, myray->direction);
-  subtract(sphereRay, myray->position, mysphere->center);
-  b = 2.0*dot(sphereRay, myray->direction);
-  c = dot(sphereRay, sphereRay) - mysphere->radius*mysphere->radius;
+  subtract(p, myray->position, mysphere->center);
+  b = 2.0*dot(p, myray->direction);
+  c = dot(p, p) - mysphere->radius*mysphere->radius;
   quadratic(a,b,c, &nroots, &root1, &root2);
   if (nroots == 0) {
     *success = 0;
