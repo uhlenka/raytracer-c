@@ -5,13 +5,19 @@
 
 ray rayMalloc(void) {
   ray r = (ray)malloc(sizeof(struct ray));
-  r->position = vectorMalloc();
-  r->direction = vectorMalloc();
+  //r->position = vectorMalloc();
+    vector pos;
+    assign(&pos, 0.0, 0.0, 0.0);
+    r->position = &pos;
+  //r->direction = vectorMalloc();
+    vector dir;
+    assign(&dir, 0.0, 0.0, 0.0);
+    r->direction = &dir;
   return r;
 }
 void rayFree(ray r) {
-  vectorFree(r->position);
-  vectorFree(r->direction);
+  //vectorFree(r->position);
+  //vectorFree(r->direction);
   free(r);
 }
 ray makeRay(double x, double y, double z,
@@ -24,15 +30,20 @@ ray makeRay(double x, double y, double z,
 
 sphere sphereMalloc(void) {
   sphere s  = (sphere)malloc(sizeof (struct sphere));
-  s->center = vectorMalloc();
-  s->color = vectorMalloc();
+  //s->center = vectorMalloc();
+    vector center;
+    assign (&center, 0.0, 0.0, 0.0);
+    s->center = &center;
+  //s->color = vectorMalloc();
+    vector color;
+    s->color = &color;
   assign(s->color, 0.5, 0.5, 0.5);
   s->radius = 1.0;
   return s;
 }
 void sphereFree(sphere s) {
-  vectorFree(s->center);
-  vectorFree(s->color);
+  //vectorFree(s->center);
+  //vectorFree(s->color);
   free(s);
 }
 sphere makeSphere(double x, double y, double z,
@@ -53,20 +64,26 @@ void sphereCopy(sphere s1, sphere s2) {
 
 world worldMalloc(void) {
   world w = (world)malloc(sizeof(struct world));
-  w->eye = vectorMalloc();
+  //w->eye = vectorMalloc();
+    vector eye;
+    w->eye = &eye;
   assign(w->eye, 0.0, 0.0, 200.0);
-  w->light = vectorMalloc();
+  //w->light = vectorMalloc();
+    vector light;
+    w->light = &light;
   assign(w->light, 1.0, 1.0, 1.0);
   normalize(w->light);
-  w->backgroundColor = vectorMalloc();
+  //w->backgroundColor = vectorMalloc();
+    vector bgc;
+    w->backgroundColor = &bgc;
   assign(w->backgroundColor, 0.5, 0.75, 1.0);
   w->length = 0;
   return w;
 }
 void worldFree(world w) {
-  vectorFree(w->eye);
-  vectorFree(w->light);
-  vectorFree(w->backgroundColor);
+  //vectorFree(w->eye);
+  //vectorFree(w->light);
+  //vectorFree(w->backgroundColor);
   free(w);
 }
 
@@ -101,8 +118,8 @@ void quadratic(double a, double b, double c, /* in */
 }
 
 void sphereNormal(sphere s,    /* in */
-		  vector pos,  /* in */
-		  vector norm  /* out */) {
+		  vector *pos,  /* in */
+		  vector *norm  /* out */) {
 /* find the normal to a sphere s at position pos */
   subtract(norm, pos, s->center);
   normalize(norm);
@@ -115,7 +132,9 @@ void tracer(const char* filename, /* file to write image into */
   FILE *file;
   double x, y, inc;
   int size, i, j;
-  vector color = vectorMalloc();
+  //vector color = vectorMalloc();
+    vector color;
+    assign(&color, 0.0, 0.0, 0.0);
   file = fopen(filename, "w");
   size = resolution * 100;
   fprintf(file, "P3 %d %d 255\n", size, size);
@@ -124,9 +143,9 @@ void tracer(const char* filename, /* file to write image into */
   for (j = 0; j < size; j++) {
     x = -50.0;
     for (i = 0; i < size; i++) {
-      colorAt(x, y, theworld, color);
-      multiply(color, 255.0);
-      vectorIntegerPrintf(file, color);
+      colorAt(x, y, theworld, &color);
+      multiply(&color, 255.0);
+      vectorIntegerPrintf(file, &color);
       x += inc;
     }
     y -= inc;
@@ -136,39 +155,44 @@ void tracer(const char* filename, /* file to write image into */
 
 void colorAt(double x, double y,
 	     world theworld,
-	     vector color){
-  vector pos = vectorMalloc();
-  assign(pos, x, y, 0.0);
+	     vector *color){
+  //vector pos = vectorMalloc();
+    vector pos;
+  assign(&pos, x, y, 0.0);
   ray myray = rayMalloc();
   myray->position = theworld->eye;
-  subtract(myray->direction, pos, theworld->eye);
+  subtract(myray->direction, &pos, theworld->eye);
   sendRay(myray, theworld, color);
 }
 
 void sendRay(ray myray,    /* in */
 	     world theworld, /* in */
-	     vector color  /* out */) {
+	     vector *color  /* out */) {
 /* find color of what ray hits in the world */
   int success;
-  vector pos = vectorMalloc();
+  //vector pos = vectorMalloc();
+    vector pos;
+    assign(&pos, 0.0, 0.0, 0.0);
   sphere mysphere = sphereMalloc();
-  firstHit(myray, theworld, &success, pos, mysphere);
+  firstHit(myray, theworld, &success, &pos, mysphere);
   if (success) {
-    lambert(mysphere, pos, theworld, color);
+    lambert(mysphere, &pos, theworld, color);
   } else {
     copy(color, theworld->backgroundColor);
   }
 }
 
 void lambert(sphere mysphere, /* in */
-	     vector pos,     /* in */
+	     vector *pos,     /* in */
 	     world  theworld,   /* in */
-	     vector color    /* out */) {
+	     vector *color    /* out */) {
 /* find color of pos on sphere in world, using lambert shading */
-  vector norm = vectorMalloc();
+  //vector norm = vectorMalloc();
+    vector norm;
+    assign(&norm, 0.0, 0.0, 0.0);
   double value;
-  sphereNormal(mysphere, pos, norm);
-  value = dot(norm, theworld->light);
+  sphereNormal(mysphere, pos, &norm);
+  value = dot(&norm, theworld->light);
   if (value < 0.0) {
     value = 0.0;
   }
@@ -179,24 +203,26 @@ void lambert(sphere mysphere, /* in */
 void firstHit(ray myray,      /* in */
 	      world theworld,  /* in */
 	      int* success,  /* out */
-	      vector pos,    /* out */
+	      vector *pos,    /* out */
 	      sphere mysphere  /* out */) {
 /* find first hit of ray in world
    success is false if no hit
    sphere and position of closest hit returned otherwise */
   double dist, tmpDist;
-  vector tmpPos = vectorMalloc();
+  //vector tmpPos = vectorMalloc();
+    vector tmpPos;
+    assign(&tmpPos, 0.0, 0.0, 0.0);
   int tmpSuccess, i;
   dist = 1.0e20;
   *success = 0;
   for (i = theworld->length-1; i >=0; i--) {
-    intersect(theworld->objects[i], myray, &tmpSuccess, tmpPos);
+    intersect(theworld->objects[i], myray, &tmpSuccess, &tmpPos);
     if (tmpSuccess) {
-      tmpDist = distance(theworld->eye, tmpPos);      
+      tmpDist = distance(theworld->eye, &tmpPos);
       if (tmpDist < dist) {
 	*success = 1;
 	dist = tmpDist;
-	copy(pos, tmpPos);
+	copy(pos, &tmpPos);
 	sphereCopy(mysphere, theworld->objects[i]);
       }
     }
@@ -206,18 +232,20 @@ void firstHit(ray myray,      /* in */
 void intersect(sphere mysphere, /* in */
 	       ray myray,      /* in */
 	       int* success,  /* out */
-	       vector pos     /* out */) {
+	       vector *pos     /* out */) {
 /* determine if ray intersects sphere
    success is false if no intersection
    pos is position of intersection otherwise */
   double a, b, c;
-  vector p = vectorMalloc();
+  //vector p = vectorMalloc();
+    vector p;
+    //assign(&p, 0.0, 0.0, 0.0);
   int nroots;
   double root1, root2;
   a = dot(myray->direction, myray->direction);
-  subtract(p, myray->position, mysphere->center);
-  b = 2.0*dot(p, myray->direction);
-  c = dot(p, p) - mysphere->radius*mysphere->radius;
+  subtract(&p, myray->position, mysphere->center);
+  b = 2.0*dot(&p, myray->direction);
+  c = dot(&p, &p) - mysphere->radius*mysphere->radius;
   quadratic(a,b,c, &nroots, &root1, &root2);
   if (nroots == 0) {
     *success = 0;

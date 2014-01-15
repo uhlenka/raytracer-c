@@ -63,15 +63,18 @@ void testQuadratic(CuTest* tc) {
 
 void testSphereNormal(CuTest* tc) {
   sphere s = makeSphere(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
-  vector pos = vectorMalloc();
-  vector norm = vectorMalloc();
-  assign(pos, 1.0, 0.0, 0.0);
-  sphereNormal(s, pos, norm);
-  CuAssertDblEquals(tc, norm->x, 1.0, DELTA);
-  CuAssertDblEquals(tc, norm->y, 0.0, DELTA);
-  CuAssertDblEquals(tc, norm->z, 0.0, DELTA);
-  vectorFree(pos);
-  vectorFree(norm);
+  //vector pos = vectorMalloc();
+    vector pos;
+  //vector norm = vectorMalloc();
+    vector norm;
+    assign(&norm, 0.0, 0.0, 0.0);
+  assign(&pos, 1.0, 0.0, 0.0);
+  sphereNormal(s, &pos, &norm);
+  CuAssertDblEquals(tc, norm.x, 1.0, DELTA);
+  CuAssertDblEquals(tc, norm.y, 0.0, DELTA);
+  CuAssertDblEquals(tc, norm.z, 0.0, DELTA);
+  //vectorFree(pos);
+  //vectorFree(norm);
   sphereFree(s);
 }
 
@@ -79,35 +82,39 @@ void testIntersect(CuTest* tc) {
   int success;
   sphere s = makeSphere(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
   ray r = makeRay(0.0, 0.0, 2.0, 0.0, 0.0, -1.0);
-  vector pos = vectorMalloc();
-  intersect(s, r, &success, pos);
+  //vector pos = vectorMalloc();
+    vector pos;
+    //assign(&pos, 0.0, 0.0, 0.0);
+  intersect(s, r, &success, &pos);
   CuAssertTrue(tc, success);
-  CuAssertDblEquals(tc, pos->x, 0.0, DELTA);
-  CuAssertDblEquals(tc, pos->y, 0.0, DELTA);
-  CuAssertDblEquals(tc, pos->z, 1.0, DELTA);
+  CuAssertDblEquals(tc, pos.x, 0.0, DELTA);
+  CuAssertDblEquals(tc, pos.y, 0.0, DELTA);
+  CuAssertDblEquals(tc, pos.z, 1.0, DELTA);
   sphereFree(s);
   rayFree(r);
-  vectorFree(pos);
+  //vectorFree(pos);
 }
 
 void testFirstHit(CuTest* tc) {
   int success;
   world w = worldMalloc();
   ray r = rayMalloc();
-  vector pos = vectorMalloc();
+  //vector pos = vectorMalloc();
+    vector pos;
+    assign(&pos, 0.0, 0.0, 0.0);
   sphere s1 = makeSphere(0.0, 0.0, -11.0, 1.0, 0.9, 0.9, 0.9);
   sphere s2 = sphereMalloc();
   addSphere(w, s1);
   assign(r->position, 0.0, 0.0, 1.0);
   assign(r->direction, 0.0, 0.0, -1.0);
-  firstHit(r, w, &success, pos, s2);
+  firstHit(r, w, &success, &pos, s2);
   CuAssertTrue(tc, success);
-  CuAssertDblEquals(tc, pos->z, -10.0, DELTA);
+  CuAssertDblEquals(tc, pos.z, -10.0, DELTA);
   CuAssertDblEquals(tc, s2->center->z, s1->center->z, DELTA);
   CuAssertDblEquals(tc, s2->color->x, s1->color->x, DELTA);
   worldFree(w);
   rayFree(r);
-  vectorFree(pos);
+  //vectorFree(pos);
   sphereFree(s1);
   sphereFree(s2);
 }
