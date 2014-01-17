@@ -10,46 +10,65 @@
 #define DELTA 1.0e-6
 
 void testRayMalloc(CuTest* tc) {
-  ray r = rayMalloc();
-  CuAssertTrue(tc, NULL != r);
-  CuAssertDblEquals(tc, 0.0, r->position->x, DELTA);
-  CuAssertDblEquals(tc, 0.0, r->direction->x, DELTA);
-  rayFree(r);
+  //ray r = rayMalloc();
+    ray r;
+    assign(&r.position, 0.0, 0.0, 0.0);
+    assign(&r.direction, 0.0, 0.0, 0.0);
+  //CuAssertTrue(tc, NULL != r);
+  CuAssertDblEquals(tc, 0.0, r.position.x, DELTA);
+  CuAssertDblEquals(tc, 0.0, r.direction.x, DELTA);
+  //rayFree(r);
 }
 
 void testMakeRay(CuTest* tc) {
   ray r = makeRay(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
-  CuAssertDblEquals(tc, 1.0, r->position->x, DELTA);
-  CuAssertDblEquals(tc, 4.0, r->direction->x, DELTA);
-  rayFree(r);
+  CuAssertDblEquals(tc, 1.0, r.position.x, DELTA);
+  CuAssertDblEquals(tc, 4.0, r.direction.x, DELTA);
+  //rayFree(r);
 }  
 
 void testMakeSphere(CuTest* tc) {
   sphere s = makeSphere(1.0, 2.0, 3.0, 4.0, 0.5, 0.5, 0.5);
-  CuAssertDblEquals(tc, s->center->x, 1.0, DELTA);
-  CuAssertDblEquals(tc, s->radius, 4.0, DELTA);
-  sphereFree(s);
+  CuAssertDblEquals(tc, s.center.x, 1.0, DELTA);
+  CuAssertDblEquals(tc, s.radius, 4.0, DELTA);
+  //sphereFree(s);
 }
 
 void testWorldMalloc(CuTest* tc) {
-  world w = worldMalloc();
-  CuAssertTrue(tc, NULL != w);
-  CuAssertDblEquals(tc, w->eye->z, 200.0, DELTA);
-  CuAssertIntEquals(tc, w->length, 0);
-  worldFree(w);
+  //world w = worldMalloc();
+    world w;
+    assign(&w.eye, 0.0, 0.0, 200.0);
+    assign(&w.light, 1.0, 1.0, 1.0);
+    normalize(&w.light);
+    assign(&w.backgroundColor, 0.5, 0.75, 1.0);
+    w.length = 0;
+  CuAssertTrue(tc, NULL != &w);
+  CuAssertDblEquals(tc, w.eye.z, 200.0, DELTA);
+  CuAssertIntEquals(tc, w.length, 0);
+  //worldFree(w);
 }
 
 void testAddSphere(CuTest* tc) {
-  world w = worldMalloc();
-  sphere s = sphereMalloc();
-  addSphere(w, s);
-  CuAssertIntEquals(tc, 1, w->length);
-  CuAssertDblEquals(tc, 0.0, w->objects[0]->center->x, DELTA);
-  addSphere(w, s);
-  CuAssertIntEquals(tc, 2, w->length);
-  CuAssertDblEquals(tc, 0.0, w->objects[1]->center->x, DELTA);
-  sphereFree(s);
-  worldFree(w);
+  //world w = worldMalloc();
+    world w;
+    assign(&w.eye, 0.0, 0.0, 200.0);
+    assign(&w.light, 1.0, 1.0, 1.0);
+    normalize(&w.light);
+    assign(&w.backgroundColor, 0.5, 0.75, 1.0);
+    w.length = 0;
+  //sphere s = sphereMalloc();
+    sphere s;
+    assign(&s.center, 0.0, 0.0, 0.0);
+    assign(&s.color, 0.5, 0.5, 0.5);
+    s.radius = 1.0;
+  addSphere(&w, &s);
+  CuAssertIntEquals(tc, 1, w.length);
+  CuAssertDblEquals(tc, 0.0, w.objects[0]->center.x, DELTA);
+  addSphere(&w, &s);
+  CuAssertIntEquals(tc, 2, w.length);
+  CuAssertDblEquals(tc, 0.0, w.objects[1]->center.x, DELTA);
+  //sphereFree(s);
+  //worldFree(w);
 }  
   
 void testQuadratic(CuTest* tc) {
@@ -69,13 +88,13 @@ void testSphereNormal(CuTest* tc) {
     vector norm;
     assign(&norm, 0.0, 0.0, 0.0);
   assign(&pos, 1.0, 0.0, 0.0);
-  sphereNormal(s, &pos, &norm);
+  sphereNormal(&s, &pos, &norm);
   CuAssertDblEquals(tc, norm.x, 1.0, DELTA);
   CuAssertDblEquals(tc, norm.y, 0.0, DELTA);
   CuAssertDblEquals(tc, norm.z, 0.0, DELTA);
   //vectorFree(pos);
   //vectorFree(norm);
-  sphereFree(s);
+  //sphereFree(s);
 }
 
 void testIntersect(CuTest* tc) {
@@ -84,39 +103,50 @@ void testIntersect(CuTest* tc) {
   ray r = makeRay(0.0, 0.0, 2.0, 0.0, 0.0, -1.0);
   //vector pos = vectorMalloc();
     vector pos;
-    //assign(&pos, 0.0, 0.0, 0.0);
-  intersect(s, r, &success, &pos);
+    assign(&pos, 0.0, 0.0, 0.0);
+  intersect(&s, &r, &success, &pos);
   CuAssertTrue(tc, success);
   CuAssertDblEquals(tc, pos.x, 0.0, DELTA);
   CuAssertDblEquals(tc, pos.y, 0.0, DELTA);
   CuAssertDblEquals(tc, pos.z, 1.0, DELTA);
-  sphereFree(s);
-  rayFree(r);
+  //sphereFree(s);
+  //rayFree(r);
   //vectorFree(pos);
 }
 
 void testFirstHit(CuTest* tc) {
   int success;
-  world w = worldMalloc();
-  ray r = rayMalloc();
+  //world w = worldMalloc();
+    world w;
+    assign(&w.eye, 0.0, 0.0, 200.0);
+    assign(&w.light, 1.0, 1.0, 1.0);
+    normalize(&w.light);
+    assign(&w.backgroundColor, 0.5, 0.75, 1.0);
+    w.length = 0;
+  //ray r = rayMalloc();
+    ray r;
   //vector pos = vectorMalloc();
     vector pos;
     assign(&pos, 0.0, 0.0, 0.0);
   sphere s1 = makeSphere(0.0, 0.0, -11.0, 1.0, 0.9, 0.9, 0.9);
-  sphere s2 = sphereMalloc();
-  addSphere(w, s1);
-  assign(r->position, 0.0, 0.0, 1.0);
-  assign(r->direction, 0.0, 0.0, -1.0);
-  firstHit(r, w, &success, &pos, s2);
+  //sphere s2 = sphereMalloc();
+    sphere s2;
+    assign(&s2.center, 0.0, 0.0, 0.0);
+    assign(&s2.color, 0.5, 0.5, 0.5);
+    s2.radius = 1.0;
+  addSphere(&w, &s1);
+  assign(&r.position, 0.0, 0.0, 1.0);
+  assign(&r.direction, 0.0, 0.0, -1.0);
+  firstHit(&r, &w, &success, &pos, &s2);
   CuAssertTrue(tc, success);
   CuAssertDblEquals(tc, pos.z, -10.0, DELTA);
-  CuAssertDblEquals(tc, s2->center->z, s1->center->z, DELTA);
-  CuAssertDblEquals(tc, s2->color->x, s1->color->x, DELTA);
-  worldFree(w);
-  rayFree(r);
+  CuAssertDblEquals(tc, s2.center.z, s1.center.z, DELTA);
+  CuAssertDblEquals(tc, s2.color.x, s1.color.x, DELTA);
+  //worldFree(w);
+  //rayFree(r);
   //vectorFree(pos);
-  sphereFree(s1);
-  sphereFree(s2);
+  //sphereFree(s1);
+  //sphereFree(s2);
 }
 
 CuSuite* RaytraceSuite(void) {
